@@ -1,28 +1,38 @@
 package filego
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	//"io"
+	"github.com/jinzhu/copier"
+	"io"
 	"io/ioutil"
-	"multipart"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
 
+// Represents a basic Gofile upload struct
 type Connection struct {
-	// Attribute for FormFiles
-	Server      string
-	Files       []*File
-	Email       string
+	// Upload server name
+	Server string
+	// Map of files, represented by [filename]io.Reader
+	FilesUploaded map[string]io.Reader
+	// Upload email
+	Email string
+	// Upload description
 	Description string
-	Password    string
-	Tags        []string
-	Expire      int64
-}
-
-type File struct {
+	// Upload Password
+	Password string
+	// Upload tags provided as string array
+	Tags []string
+	// Expiration date timestamp
+	Expire int64
 }
 
 type bestServerResponse struct {
@@ -30,6 +40,13 @@ type bestServerResponse struct {
 	Data   map[string]string
 }
 
+// Response of the Gofile server
+type UploadResponse struct {
+	Status map[string]string
+	Data   map[string]interface{}
+}
+
+// Refreshes best server via contacting gofile api
 func (conn *Connection) GetNewServer() error {
 	const getServerUrl = "https://apiv2.gofile.io/getServer"
 	request, err := http.Get(getServerUrl)
@@ -54,11 +71,21 @@ func (conn *Connection) GetNewServer() error {
 	return errors.New("Couldn't obtain new server")
 }
 
-// Setters
-/*func (conn *Connection) AddFile(reader *io.Reader) {
-	conn.Files = append(conn.Files, file)
+func (conn *Connection) noRepeat(name string) string {
+	if _, exists := conn.FilesUploaded[name]; exists {
+		name = "(Copy)- " + name
+		conn.noRepeat(name)
+	}
+	return name
 }
-*/
+
+// Setters
+
+func (conn *Connection) AddFile(name string, file io.Reader) {
+	key := conn.noRepeat(name)
+	conn.FilesUploaded[key] = file
+}
+
 func (conn *Connection) SetEmail(email string) {
 	conn.Email = email
 }
@@ -79,18 +106,99 @@ func (conn *Connection) SetExpire(timeStamp time.Time) {
 	conn.Expire = timeStamp.Unix()
 }
 
-func (conn *Connection) Send() error {
-	return nil
-}
-
-// Returns a new empty connection struct
+// Returns a new connection struct.
 func NewConnection() (*Connection, error) {
 	conn := new(Connection)
-	err := conn.GetNewServer()
-	if err != nil {
-		return nil, err
-	}
+	conn.build()
 	return conn, nil
 }
 
-func NewDefaultConnection() {}
+func (conn *Connection) build() {
+	conn.GetNewServer()
+	conn.FilesUploaded = make(map[string]io.Reader)
+}
+
+// Acts as a constructor. Requires a Connection struct.
+func (conn *Connection) Construct(providedStruct *Connection) {
+	copier.Copy(&conn, &providedStruct)
+	conn.build()
+}
+
+// Uploads files to gofile, using the Connection struct parameters
+func (conn *Connection) Upload() (*UploadResponse, error) {
+	url := fmt.Sprintf("https://%s.gofile.io/upload", conn.Server)
+	fmt.Println(url)
+	buffer := new(bytes.Buffer)
+	multiWriter := multipart.NewWriter(buffer)
+	for _, reader := range conn.FilesUploaded {
+		var fileWriter io.Writer
+		var err error
+		if x, ok := reader.(io.Closer); ok {
+			defer x.Close()
+		}
+		if x, ok := reader.(*os.File); ok {
+			if fileWriter, err = multiWriter.CreateFormFile("filesUploaded", x.Name()); err != nil {
+				return nil, err
+			}
+		} else {
+			if fileWriter, err = multiWriter.CreateFormField("filesUploaded"); err != nil {
+				return nil, err
+			}
+		}
+		if _, err := io.Copy(fileWriter, reader); err != nil {
+			return nil, err
+		}
+	}
+	conn.generateFormFields(multiWriter)
+	multiWriter.Close()
+
+	request, err := http.NewRequest("POST", url, buffer)
+	if err != nil {
+		return nil, err
+	}
+
+	request.Header.Set("Content-Type", multiWriter.FormDataContentType())
+	client := &http.Client{}
+
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	responseJson := new(UploadResponse)
+	content, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	json.Unmarshal(content, responseJson)
+
+	return responseJson, nil
+}
+
+func (conn *Connection) generateFormFields(multiWriter *multipart.Writer) {
+	if conn.Email != "" {
+		multiWriter.WriteField("email", conn.Email)
+	}
+	if conn.Description != "" {
+		multiWriter.WriteField("description", conn.Description)
+	}
+	if conn.Password != "" {
+		multiWriter.WriteField("password", conn.Password)
+	}
+	if conn.Tags != nil {
+		var tags string
+		var Allowed = regexp.MustCompile(`^[a-zA-Z0-9]`).MatchString
+		for _, tag := range conn.Tags {
+			if !Allowed(tag) {
+				continue
+			}
+			tags = tags + "," + tag
+		}
+		tags = strings.TrimPrefix(tags, ",")
+		multiWriter.WriteField("tags", tags)
+	}
+	if conn.Expire != 0 {
+		multiWriter.WriteField("expire", strconv.Itoa(int(conn.Expire)))
+	}
+}
