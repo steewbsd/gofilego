@@ -1,4 +1,4 @@
-package filego
+package gofilego
 
 import (
 	"bytes"
