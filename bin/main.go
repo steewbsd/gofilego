@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/0xSteeW/filego"
 	"flag"
 	"fmt"
 	"os"
 )
+
+import "github.com/0xSteeW/filego"
 
 func main() {
 	inputFile := flag.String("f", "", "Path of the file to be uploaded")
