@@ -1,7 +1,7 @@
 package main
 
 import (
-	"filego"
+	"github.com/0xSteeW/filego/filego"
 	"flag"
 	"fmt"
 	"os"
