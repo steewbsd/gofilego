@@ -35,3 +35,32 @@ func main() {
 	
 }
 ```
+
+## Index
+
+```go
+*Connection* - Struct
+	Server	string
+	FilesUploaded map[string]io.Reader
+	Email	string
+	Description	string
+	Password	string
+	Expire	time.Time
+	Tags	[]string
+
+*UploadResponse* - Struct 
+	Status	string
+	Data map[string]interface{}
+
+func (conn *Connection):
+	GetNewServer() error
+	NewConnection() (*Connection, error)
+	Construct(providedStruct *Connection)
+	Upload() (*UploadResponse, error)
+	AddFile(fileName string, reader io.Reader)
+	AddEmail(email string)	
+	AddDescription(desc string)
+	AddPassword(pass string)
+	AddExpire(tstamp time.Time)
+	AddTags(tags ...string)
+```
