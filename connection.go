@@ -120,6 +120,7 @@ func (conn *Connection) build() error {
 	if err != nil {
 		return err
 	}
+	return nil
 }
 
 // Acts as a constructor. Requires a Connection struct.
