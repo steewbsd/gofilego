@@ -2,6 +2,34 @@
 
 Filego is a simple Golang wrapper around Gofile.io's API. It provides a basic library for uploading files inside your code and an executable to quickly upload files to Gofile.
 
+# Usage
+
+To install the executable run:
+
+```bash
+go get -u github.com/0xSteeW/filego/bin
+```
+To run it:
+```bash
+filego-upload -f test.file
+```
+Make sure you've set yout GOPATH properly.
+
+To get a basic help menu:
+
+```bash
+filego-upload -h
+```
+### Library
+To just install the library:
+```bash
+go get -u githuv.com/0xSteeW/filego
+```
+Then, import it in your code as follows:
+```go
+import "github.com/0xSteeW/filego"
+```
+
 # Documentation
 
 Here is a basic example for uploading a file with email and password:
