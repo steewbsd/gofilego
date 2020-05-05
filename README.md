@@ -8,6 +8,7 @@ To install the executable run:
 
 ```bash
 go get -u github.com/0xSteeW/filego/bin
+go install github.com/0xSteeW/filego/bin
 ```
 To run it:
 ```bash
@@ -23,7 +24,7 @@ filego-upload -h
 ### Library
 To just install the library:
 ```bash
-go get -u githuv.com/0xSteeW/filego
+go get -u github.com/0xSteeW/filego
 ```
 Then, import it in your code as follows:
 ```go
