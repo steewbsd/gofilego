@@ -40,7 +40,7 @@ type bestServerResponse struct {
 
 // Response of the Gofile server
 type UploadResponse struct {
-	Status map[string]string
+	Status string
 	Data   map[string]interface{}
 }
 
@@ -132,7 +132,6 @@ func (conn *Connection) Construct(providedStruct *Connection) {
 // Uploads files to gofile, using the Connection struct parameters
 func (conn *Connection) Upload() (*UploadResponse, error) {
 	url := fmt.Sprintf("https://%s.gofile.io/upload", conn.Server)
-	fmt.Println(url)
 	buffer := new(bytes.Buffer)
 	multiWriter := multipart.NewWriter(buffer)
 	for _, reader := range conn.FilesUploaded {
