@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+const VERSION = "v0.1"
+
 // Represents a basic Gofile upload struct
 type Connection struct {
 	// Upload server name
