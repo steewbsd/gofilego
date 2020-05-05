@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	if *help {
-		fmt.Println("Gofilego uploader made by SteeW " + filego.VERSION)
+		fmt.Println("Gofilego uploader made by SteeW " + gofilego.VERSION)
 		fmt.Println("Usage: (Flag)(Alt flag)(Description)")
 		fmt.Println("\t-f file.txt\tRequired flag. Specifies the file path to be uploaded.")
 		fmt.Println("\t-e\tOptional. Specifies the upload email.")
