@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-import "github.com/0xSteeW/filego"
+import "github.com/0xSteeW/gofilego"
 
 func main() {
 	inputFile := flag.String("f", "", "Path of the file to be uploaded")
@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 
 	if *help {
-		fmt.Println("Filego uploader made by SteeW " + filego.VERSION)
+		fmt.Println("Gofilego uploader made by SteeW " + filego.VERSION)
 		fmt.Println("Usage: (Flag)(Alt flag)(Description)")
 		fmt.Println("\t-f file.txt\tRequired flag. Specifies the file path to be uploaded.")
 		fmt.Println("\t-e\tOptional. Specifies the upload email.")
@@ -26,8 +26,8 @@ func main() {
 		fmt.Println("\t-p\tOptional. Specifies the password.")
 		return
 	}
-	conn, _ := filego.NewConnection()
-	upload := &filego.Connection{Email: *email, Description: *desc, Password: *pass}
+	conn, _ := gofilego.NewConnection()
+	upload := &gofilego.Connection{Email: *email, Description: *desc, Password: *pass}
 	conn.Construct(upload)
 	b, err := os.Open(*inputFile)
 	if err != nil {

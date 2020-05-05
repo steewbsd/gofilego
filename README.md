@@ -1,34 +1,34 @@
-# Filego
+# Gofilego!
 
-Filego is a simple Golang wrapper around Gofile.io's API. It provides a basic library for uploading files inside your code and an executable to quickly upload files to Gofile.
+Gofilego is a simple Golang wrapper around Gofile.io's API. It provides a basic library for uploading files inside your code and an executable to quickly upload files to Gofile.
 
 # Usage
 
 To install the executable run:
 
 ```bash
-go get -u github.com/0xSteeW/filego/bin
-go install github.com/0xSteeW/filego/bin
+go get -u github.com/0xSteeW/gofilego/bin
+go install github.com/0xSteeW/gofilego/bin
 ```
 To run it:
 ```bash
-filego-upload -f test.file
+gofilego-upload -f test.file
 ```
 Make sure you've set your GOPATH properly.
 
 To get a basic help menu:
 
 ```bash
-filego-upload -h
+gofilego-upload -h
 ```
 ### Library
 To just install the library:
 ```bash
-go get -u github.com/0xSteeW/filego
+go get -u github.com/0xSteeW/gofilego
 ```
 Then, import it in your code as follows:
 ```go
-import "github.com/0xSteeW/filego"
+import "github.com/0xSteeW/gofilego"
 ```
 
 # Documentation
@@ -40,17 +40,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/0xSteeW/filego"
+	"github.com/0xSteeW/gofilego"
 	"os"
 )
 
 func main() {
-	conn, err := filego.NewConnection()
+	conn, err := gofilego.NewConnection()
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	uploadStruct := &filego.Connection{Email: "example@email.com", Password: "rockyou"}
+	uploadStruct := &gofilego.Connection{Email: "example@email.com", Password: "rockyou"}
 	conn.Construct(uploadStruct)
 	// Open a file for uploading
 	reader, _ := os.Open("test.file")
