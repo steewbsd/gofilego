@@ -7,8 +7,7 @@ Gofilego is a simple Golang wrapper around Gofile.io's API. It provides a basic 
 To install the executable run:
 
 ```bash
-go get -u github.com/0xSteeW/gofilego/bin
-go install github.com/0xSteeW/gofilego/bin
+go install github.com/0xSteeW/gofilego/bin/gofilego-upload.go
 ```
 To run it:
 ```bash
