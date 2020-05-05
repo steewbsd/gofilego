@@ -5,13 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/jinzhu/copier"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -106,21 +104,27 @@ func (conn *Connection) SetExpire(timeStamp time.Time) {
 	conn.Expire = timeStamp.Unix()
 }
 
-// Returns a new connection struct.
+// Creates a new default connection. Returns a basic connection struct.
 func NewConnection() (*Connection, error) {
 	conn := new(Connection)
-	conn.build()
+	err := conn.build()
+	if err != nil {
+		return conn, err
+	}
 	return conn, nil
 }
 
-func (conn *Connection) build() {
-	conn.GetNewServer()
+func (conn *Connection) build() error {
+	err := conn.GetNewServer()
 	conn.FilesUploaded = make(map[string]io.Reader)
+	if err != nil {
+		return err
+	}
 }
 
 // Acts as a constructor. Requires a Connection struct.
 func (conn *Connection) Construct(providedStruct *Connection) {
-	copier.Copy(&conn, &providedStruct)
+	*conn = *providedStruct
 	conn.build()
 }
 
@@ -188,9 +192,9 @@ func (conn *Connection) generateFormFields(multiWriter *multipart.Writer) {
 	}
 	if conn.Tags != nil {
 		var tags string
-		var Allowed = regexp.MustCompile(`^[a-zA-Z0-9]`).MatchString
 		for _, tag := range conn.Tags {
-			if !Allowed(tag) {
+			// TODO sanitize inputs
+			if strings.Contains(tag, ",") {
 				continue
 			}
 			tags = tags + "," + tag
