@@ -14,7 +14,7 @@ To run it:
 ```bash
 filego-upload -f test.file
 ```
-Make sure you've set yout GOPATH properly.
+Make sure you've set your GOPATH properly.
 
 To get a basic help menu:
 
