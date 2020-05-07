@@ -15,9 +15,10 @@ import (
 	"time"
 )
 
-const VERSION = "v0.1"
+// VERSION represents the version of the library
+const VERSION = "v0.2"
 
-// Represents a basic Gofile upload struct
+// Connection represents a basic Gofile upload struct
 type Connection struct {
 	// Upload server name
 	Server string
@@ -40,13 +41,13 @@ type bestServerResponse struct {
 	Data   map[string]string
 }
 
-// Response of the Gofile server
+// UploadResponse is a struct representing the json response of the Gofile server
 type UploadResponse struct {
 	Status string
 	Data   map[string]interface{}
 }
 
-// Refreshes best server via contacting gofile api
+// GetNewServer refreshes best server via contacting gofile api
 func (conn *Connection) GetNewServer() error {
 	const getServerUrl = "https://apiv2.gofile.io/getServer"
 	request, err := http.Get(getServerUrl)
