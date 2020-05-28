@@ -1,3 +1,4 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/0xSteeW/gofilego)](https://goreportcard.com/report/github.com/0xSteeW/gofilego)
 # Gofilego!
 
 Gofilego is a simple Golang wrapper around Gofile.io's API. It provides a basic library for uploading files inside your code and an executable to quickly upload files to Gofile.
