@@ -82,32 +82,38 @@ func (conn *Connection) noRepeat(name string) string {
 
 // Setters
 
+// AddFile adds a file to the current  connection struct
 func (conn *Connection) AddFile(name string, file io.Reader) {
 	key := conn.noRepeat(name)
 	conn.FilesUploaded[key] = file
 }
 
+// SetEmail sets upload email
 func (conn *Connection) SetEmail(email string) {
 	conn.Email = email
 }
 
+// SetDescription sets upload description
 func (conn *Connection) SetDescription(desc string) {
 	conn.Description = desc
 }
 
+// SetPassword sets upload password
 func (conn *Connection) SetPassword(pass string) {
 	conn.Password = pass
 }
 
+// SetTags receives tags as variadic arguments.
 func (conn *Connection) SetTags(tags ...string) {
 	conn.Tags = tags
 }
 
+// SetExpire sets expiration timestamp as a time.Time object
 func (conn *Connection) SetExpire(timeStamp time.Time) {
 	conn.Expire = timeStamp.Unix()
 }
 
-// Creates a new default connection. Returns a basic connection struct.
+// NewConnection creates a new default connection. Returns a basic connection struct.
 func NewConnection() (*Connection, error) {
 	conn := new(Connection)
 	err := conn.build()
@@ -126,13 +132,13 @@ func (conn *Connection) build() error {
 	return nil
 }
 
-// Acts as a constructor. Requires a Connection struct.
+// Construct acts as a constructor. Requires a Connection struct.
 func (conn *Connection) Construct(providedStruct *Connection) {
 	*conn = *providedStruct
 	conn.build()
 }
 
-// Uploads files to gofile, using the Connection struct parameters
+// Upload files to gofile, using the Connection struct parameters
 func (conn *Connection) Upload() (*UploadResponse, error) {
 	url := fmt.Sprintf("https://%s.gofile.io/upload", conn.Server)
 	buffer := new(bytes.Buffer)
